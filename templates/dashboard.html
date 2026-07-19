@@ -1,0 +1,8 @@
+{% extends "base.html" %}{% block content %}<h2>Dashboard</h2><div class="grid g4">
+<div class="card metric"><span class="muted">Total de chamados</span><b>{{ k.total or 0 }}</b></div>
+<div class="card metric"><span class="muted">Em aberto</span><b class="warn">{{ k.abertos or 0 }}</b></div>
+<div class="card metric"><span class="muted">Finalizados</span><b class="ok">{{ k.finalizados or 0 }}</b></div>
+<div class="card metric"><span class="muted">Improcedentes</span><b class="bad">{{ k.improcedentes or 0 }}</b></div></div>
+<div class="grid g2"><div class="card"><h3>Chamados por empreendimento</h3>{% set maxq=(por_emp|map(attribute='qtd')|max) if por_emp else 1 %}{% for x in por_emp %}<div style="margin:11px 0"><div>{{ x.empreendimento }} <b style="float:right">{{ x.qtd }}</b></div><div class="bar"><span style="width:{{ (x.qtd/maxq*100)|round }}%"></span></div></div>{% endfor %}</div>
+<div class="card"><h3>Resumo financeiro pago/recebido</h3><p>Entradas: <b class="ok">R$ {{ "%.2f"|format(fin.entradas) }}</b></p><p>Saídas: <b class="bad">R$ {{ "%.2f"|format(fin.saidas) }}</b></p><p>Saldo: <b>R$ {{ "%.2f"|format(fin.entradas-fin.saidas) }}</b></p></div></div>
+<div class="card"><h3>Chamados recentes</h3><div class="tablewrap"><table><tr><th>SAT</th><th>Empreendimento</th><th>Unidade</th><th>Status</th><th>Análise</th></tr>{% for c in recentes %}<tr><td><a href="{{ url_for('ver_chamado',id=c.id) }}">{{ c.sat }}</a></td><td>{{ c.empreendimento }}</td><td>{{ c.unidade }}</td><td>{{ c.status }}</td><td>{{ c.analise_garantia or c.classificacao }}</td></tr>{% endfor %}</table></div></div>{% endblock %}

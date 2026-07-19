@@ -1,0 +1,27 @@
+BR GESTÃO SAT 8.0
+
+INSTALAÇÃO
+1. Abra o Prompt de Comando dentro desta pasta.
+2. Execute: python -m pip install -r requirements.txt
+3. Execute: python app.py
+4. Abra no navegador: http://localhost:5000
+
+LOGIN INICIAL
+E-mail: admin@brsolucoes.com.br
+Senha: 123456
+
+RECURSOS
+- 118 chamados importados das planilhas Serena, Reserva e Boulevard
+- Dashboard
+- Cadastro e acompanhamento de chamados
+- Base resumida de garantias
+- Análise automática de prazo e categoria
+- Fotos e materiais por SAT
+- Financeiro
+- Empreendimentos
+- Usuários
+- Exportação CSV
+
+IMPORTANTE
+A análise automática é apoio operacional. A decisão técnica deve considerar vistoria,
+manual completo, data correta de entrega, manutenções realizadas e orientações da construtora.
