@@ -1,0 +1,18 @@
+{% extends "base.html" %}{% block content %}
+<div class="actions" style="justify-content:space-between;align-items:center"><div><h2>Importar chamados por planilha</h2><div class="muted">Envie a planilha recebida da construtora. O sistema reconhece os nomes mais comuns das colunas.</div></div><a class="btn btn2" href="{{ url_for('modelo_importacao') }}">Baixar modelo Excel</a></div>
+{% if not preview %}
+<form class="card" method="post" enctype="multipart/form-data">
+<label>Planilha Excel ou CSV</label><input type="file" name="planilha" accept=".xlsx,.xlsm,.csv" required>
+<p class="muted">Formatos aceitos: XLSX, XLSM e CSV. Colunas reconhecidas incluem SAT, empreendimento, morador, unidade, problema, contato, status, categoria e responsável.</p>
+<button class="btn">Ler planilha e conferir</button>
+</form>
+{% else %}
+<div class="grid g4">
+<div class="card metric"><span>Linhas encontradas</span><b>{{ rows|length }}</b></div>
+<div class="card metric"><span>Prontas para importar</span><b>{{ rows|rejectattr('_erro')|rejectattr('_duplicada')|list|length }}</b></div>
+<div class="card metric"><span>Duplicadas</span><b>{{ rows|selectattr('_duplicada')|list|length }}</b></div>
+<div class="card metric"><span>Com erro</span><b>{{ rows|selectattr('_erro')|list|length }}</b></div>
+</div>
+<form method="post" action="{{ url_for('confirmar_importacao') }}" class="actions" style="margin-bottom:14px"><input type="hidden" name="token" value="{{ token }}"><button class="btn">Confirmar importação</button><a class="btn btn2" href="{{ url_for('importar_chamados') }}">Cancelar</a></form>
+<div class="card tablewrap"><table><tr><th>Linha</th><th>SAT</th><th>Empreendimento</th><th>Morador / Unidade</th><th>Problema</th><th>Status</th><th>Validação</th></tr>{% for r in rows %}<tr><td>{{ r._linha }}</td><td>{{ r.sat }}</td><td>{{ r.empreendimento }}</td><td>{{ r.solicitante }}<br>{{ r.unidade }}</td><td>{{ (r.problema or '')[:100] }}</td><td>{{ r.status }}</td><td>{% if r._erro %}<span class="bad">{{ r._erro }}</span>{% elif r._duplicada %}<span class="warn">SAT duplicada — será ignorada</span>{% else %}<span class="ok">Pronta</span>{% endif %}</td></tr>{% endfor %}</table></div>
+{% endif %}{% endblock %}

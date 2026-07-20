@@ -1,0 +1,24 @@
+BR SmartSAT Enterprise 12.3 — Edição, Exclusão e Auditoria
+
+NOVOS RECURSOS
+- Chamados: edição completa e exclusão com confirmação.
+- Fotos: editar classificação/etapa e excluir foto.
+- Assinaturas: editar dados do cliente e excluir para coletar novamente.
+- Financeiro: editar e excluir lançamentos; saldo recalculado automaticamente.
+- Materiais: editar e excluir.
+- Auditoria: registra usuário, data, módulo, ação e dados alterados/excluídos.
+
+ATUALIZAÇÃO SEM PERDER OS DADOS
+1. Feche o sistema antigo pressionando Ctrl+C no PowerShell.
+2. Faça uma cópia de segurança do arquivo antigo:
+   data\gestao10.db
+3. Extraia esta versão em uma nova pasta.
+4. Copie o arquivo gestao10.db antigo para a pasta data desta nova versão, substituindo o arquivo existente.
+5. Copie também a pasta static\uploads antiga para a nova versão, para manter fotos e assinaturas.
+6. Abra o PowerShell na pasta nova e execute, um comando por vez:
+   python -m pip install -r requirements.txt
+   python app.py
+7. Abra http://127.0.0.1:5000
+
+IMPORTANTE
+Faça sempre uma cópia da pasta data e da pasta static\uploads antes de atualizar.

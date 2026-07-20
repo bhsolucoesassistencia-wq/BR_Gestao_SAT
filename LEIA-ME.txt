@@ -1,27 +1,32 @@
-BR GESTÃO SAT 8.0
+BR SmartSAT Enterprise 12.3
 
-INSTALAÇÃO
-1. Abra o Prompt de Comando dentro desta pasta.
-2. Execute: python -m pip install -r requirements.txt
-3. Execute: python app.py
-4. Abra no navegador: http://localhost:5000
+RECURSOS DESTA VERSAO
+- Perfis e permissoes
+- SATs, garantias, materiais e financeiro administrativo
+- Fotos com camera, GPS, data, hora e responsavel
+- Assinatura no celular com GPS
+- Check-in e check-out com GPS
+- Relatorio tecnico estruturado
+- PDF automatico da SAT com fotos e assinatura
+- Link Google Maps e Waze
+- Linha do tempo de auditoria
+- PWA instalavel e cache basico para consulta offline
+- Portal da construtora sem acesso ao financeiro
+- Exportacao Excel organizada por empreendimento
+- Aba Resumo Geral com contagem por status e empreendimento
+- Cores por status, filtros, cabecalho fixo e colunas ajustadas
+- Exportacao de todos os empreendimentos ou somente do selecionado
 
 LOGIN INICIAL
-E-mail: admin@brsolucoes.com.br
-Senha: 123456
-
-RECURSOS
-- 118 chamados importados das planilhas Serena, Reserva e Boulevard
-- Dashboard
-- Cadastro e acompanhamento de chamados
-- Base resumida de garantias
-- Análise automática de prazo e categoria
-- Fotos e materiais por SAT
-- Financeiro
-- Empreendimentos
-- Usuários
-- Exportação CSV
+admin@brsolucoes.com.br
+123456
 
 IMPORTANTE
-A análise automática é apoio operacional. A decisão técnica deve considerar vistoria,
-manual completo, data correta de entrega, manutenções realizadas e orientações da construtora.
+- A integracao real com D4Sign exige TOKEN API, CRYPT KEY e UUID do cofre.
+- O modo offline desta entrega permite abrir paginas ja visitadas. O envio offline completo de fotos e assinaturas requer armazenamento em nuvem e sincronizacao, previsto para uma proxima etapa.
+- Em producao no Render, use PostgreSQL e armazenamento permanente para fotos (S3/Cloudinary).
+
+
+ATUALIZACAO 12.3
+- O botao Exportar gera arquivo .xlsx, com uma aba para cada empreendimento.
+- O Python 3.14 ignora automaticamente o driver PostgreSQL local, evitando o erro pg_config.
