@@ -18,7 +18,7 @@ from openpyxl.styles import Font, PatternFill, Border, Side, Alignment
 from openpyxl.utils import get_column_letter
 from openpyxl.chart import BarChart, LineChart, Reference
 
-APP_VERSION='15.0'
+APP_VERSION='15.2'
 BASE=Path(__file__).resolve().parent
 UPLOAD=BASE/'static'/'uploads'; UPLOAD.mkdir(parents=True,exist_ok=True)
 DRIVE_CONFIG_FILE=BASE/'config_drive.json'
@@ -123,7 +123,7 @@ class Material(db.Model):
 class Financeiro(db.Model):
     __tablename__='financeiro'; id=db.Column(db.Integer,primary_key=True); data=db.Column(db.String(10)); tipo=db.Column(db.String(20)); descricao=db.Column(db.Text); origem=db.Column(db.String(180)); construtora=db.Column(db.String(150)); empreendimento=db.Column(db.String(150)); categoria=db.Column(db.String(120)); valor=db.Column(db.Float,default=0); status=db.Column(db.String(50)); forma_pagamento=db.Column(db.String(50)); vencimento=db.Column(db.String(10)); documento=db.Column(db.String(80)); observacoes=db.Column(db.Text)
 class Agenda(db.Model):
-    __tablename__='agenda'; id=db.Column(db.Integer,primary_key=True); chamado_id=db.Column(db.Integer,db.ForeignKey('chamados.id')); construtora=db.Column(db.String(150)); empreendimento=db.Column(db.String(150)); lider=db.Column(db.String(180)); lider_id=db.Column(db.Integer); equipe=db.Column(db.String(180)); prazo_contato=db.Column(db.String(10)); data_agendada=db.Column(db.String(10)); hora=db.Column(db.String(8)); periodo=db.Column(db.String(20)); status=db.Column(db.String(60),default='Aguardando contato'); contato_status=db.Column(db.String(60)); observacao_interna=db.Column(db.Text); observacao_construtora=db.Column(db.Text); criado_por=db.Column(db.String(180)); lider_visualizou=db.Column(db.Boolean,default=False); lider_confirmou=db.Column(db.Boolean,default=False); confirmado_em=db.Column(db.DateTime); criado_em=db.Column(db.DateTime,default=datetime.utcnow); atualizado_em=db.Column(db.DateTime,default=datetime.utcnow,onupdate=datetime.utcnow)
+    __tablename__='agenda'; id=db.Column(db.Integer,primary_key=True); chamado_id=db.Column(db.Integer,db.ForeignKey('chamados.id')); construtora=db.Column(db.String(150)); empreendimento=db.Column(db.String(150)); lider=db.Column(db.String(180)); lider_id=db.Column(db.Integer); lider_email=db.Column(db.String(180)); equipe=db.Column(db.String(180)); equipe_id=db.Column(db.Integer); equipe_email=db.Column(db.String(180)); prazo_contato=db.Column(db.String(10)); data_agendada=db.Column(db.String(10)); hora=db.Column(db.String(8)); periodo=db.Column(db.String(20)); status=db.Column(db.String(60),default='Aguardando contato'); tipo_fluxo=db.Column(db.String(40)); contato_status=db.Column(db.String(60)); observacao_interna=db.Column(db.Text); observacao_construtora=db.Column(db.Text); criado_por=db.Column(db.String(180)); agendado_por=db.Column(db.String(180)); lider_visualizou=db.Column(db.Boolean,default=False); lider_confirmou=db.Column(db.Boolean,default=False); confirmado_em=db.Column(db.DateTime); criado_em=db.Column(db.DateTime,default=datetime.utcnow); atualizado_em=db.Column(db.DateTime,default=datetime.utcnow,onupdate=datetime.utcnow)
 class Historico(db.Model):
     __tablename__='historico'; id=db.Column(db.Integer,primary_key=True); chamado_id=db.Column(db.Integer,db.ForeignKey('chamados.id')); usuario=db.Column(db.String(180)); acao=db.Column(db.String(220)); criado_em=db.Column(db.DateTime,default=datetime.utcnow)
 class Auditoria(db.Model):
@@ -143,7 +143,7 @@ def ensure_columns():
       'chamados': {'origem':"VARCHAR(30) DEFAULT 'Prestes'",'construtora':"VARCHAR(150) DEFAULT 'Prestes'"},
       'financeiro': {'origem':'VARCHAR(180)','construtora':'VARCHAR(150)','vencimento':'VARCHAR(10)','documento':'VARCHAR(80)','observacoes':'TEXT'},
       'usuarios': {'construtora':'VARCHAR(150)'},
-      'agenda': {'lider_visualizou':'BOOLEAN DEFAULT 0','lider_confirmou':'BOOLEAN DEFAULT 0','lider_id':'INTEGER','confirmado_em':'TIMESTAMP'}
+      'agenda': {'lider_visualizou':'BOOLEAN DEFAULT 0','lider_confirmou':'BOOLEAN DEFAULT 0','lider_id':'INTEGER','lider_email':'VARCHAR(180)','equipe_id':'INTEGER','equipe_email':'VARCHAR(180)','tipo_fluxo':'VARCHAR(40)','agendado_por':'VARCHAR(180)','confirmado_em':'TIMESTAMP'}
     }
     inspector=inspect(db.engine)
     tables=set(inspector.get_table_names())
@@ -543,6 +543,20 @@ def allow(*profiles):
 def can_edit(): return session.get('perfil') in ('Administrador','Líder','Equipe','Técnico')
 def is_admin(): return session.get('perfil')=='Administrador'
 
+def agenda_destino_filter(tipo):
+    nome=(session.get('nome') or '').strip().lower()
+    email=(session.get('email') or '').strip().lower()
+    uid=session.get('user_id')
+    if tipo=='lider':
+        filtros=[Agenda.lider_id==uid]
+        if nome: filtros.append(func.lower(Agenda.lider)==nome)
+        if email: filtros.append(func.lower(Agenda.lider_email)==email)
+    else:
+        filtros=[Agenda.equipe_id==uid]
+        if nome: filtros.append(func.lower(Agenda.equipe)==nome)
+        if email: filtros.append(func.lower(Agenda.equipe_email)==email)
+    return or_(*filtros)
+
 def log(cid,acao):
     db.session.add(Historico(chamado_id=cid,usuario=session.get('nome','Sistema'),acao=acao)); db.session.commit()
 
@@ -577,15 +591,15 @@ def warranty_analysis(emp,cat,de,da):
 def context():
     avisos_lider=0
     if session.get('perfil')=='Líder' and session.get('nome'):
-        avisos_lider=Agenda.query.filter(or_(Agenda.lider_id==session.get('user_id'),func.lower(Agenda.lider)==session.get('nome','').lower()),Agenda.lider_confirmou==False,Agenda.status=='Aguardando agendamento do líder').count()
-    return dict(can_edit=can_edit(),is_admin=is_admin(),perfil=session.get('perfil'),now=datetime.now(),avisos_lider=avisos_lider,app_version=APP_VERSION,agenda_status=['Aguardando agendamento do líder','Aguardando contato','Cliente não respondeu','Aguardando confirmação','Agendada','Enviada para equipe','Em atendimento','Reagendada','Cancelada','Atendimento realizado'])
+        avisos_lider=Agenda.query.filter(agenda_destino_filter('lider'),Agenda.lider_confirmou==False,Agenda.status.in_(['Aguardando Líder','Aguardando agendamento do líder'])).count()
+    return dict(can_edit=can_edit(),is_admin=is_admin(),perfil=session.get('perfil'),now=datetime.now(),avisos_lider=avisos_lider,app_version=APP_VERSION,agenda_status=['Aguardando Líder','Agendada pelo Administrador','Agendada pelo Líder','Enviada para equipe','Em Execução','Finalizada','Cliente não respondeu','Reagendada','Cancelada','Atendimento realizado'])
 
 @app.route('/login',methods=['GET','POST'])
 def login():
     if request.method=='POST':
         u=Usuario.query.filter(func.lower(Usuario.email)==request.form.get('email','').strip().lower(),Usuario.ativo==True).first()
         if u and check(u.senha,request.form.get('senha','')):
-            session.clear(); session.update(user_id=u.id,nome=u.nome,perfil=u.perfil,construtora=u.construtora); return redirect(url_for('dashboard'))
+            session.clear(); session.update(user_id=u.id,nome=u.nome,email=u.email,perfil=u.perfil,construtora=u.construtora); return redirect(url_for('dashboard'))
         flash('E-mail ou senha inválidos.','erro')
     return render_template('login.html')
 @app.route('/sair')
@@ -1242,36 +1256,45 @@ def exportar():
 def agenda():
     if request.method=='POST':
         if session.get('perfil') not in ('Administrador','Líder'): abort(403)
-        c=Chamado.query.get_or_404(int(request.form.get('chamado_id')))
-        fluxo=request.form.get('fluxo') or 'agendamento'
-        status=request.form.get('status') or 'Aguardando contato'
-        equipe=request.form.get('equipe')
-        lider_confirmou=False
-        if fluxo=='encaminhar_lider':
-            if session.get('perfil')!='Administrador': abort(403)
-            status='Aguardando agendamento do líder'
-            equipe=None
-            lider_confirmou=False
+        chamado_id=request.form.get('chamado_id',type=int)
+        if not chamado_id: abort(400)
+        c=Chamado.query.get_or_404(chamado_id)
+        fluxo=(request.form.get('fluxo') or 'agendar_direto').strip()
         lider_id=request.form.get('lider_id',type=int)
-        lider_nome=request.form.get('lider')
-        if lider_id:
-            lider_usuario=Usuario.query.get(lider_id)
-            if not lider_usuario or lider_usuario.perfil!='Líder': abort(400)
-            lider_nome=lider_usuario.nome
-        elif fluxo=='agendamento' and session.get('perfil')=='Líder':
-            lider_id=session.get('user_id'); lider_nome=session.get('nome')
-        a=Agenda(chamado_id=c.id,construtora=c.construtora or 'Prestes',empreendimento=c.empreendimento,lider=lider_nome,lider_id=lider_id,equipe=equipe,prazo_contato=request.form.get('prazo_contato'),data_agendada=request.form.get('data_agendada'),hora=request.form.get('hora'),periodo=request.form.get('periodo'),status=status,contato_status=request.form.get('contato_status'),observacao_interna=request.form.get('observacao_interna'),observacao_construtora=request.form.get('observacao_construtora'),criado_por=session.get('nome'),lider_confirmou=lider_confirmou)
-        db.session.add(a); db.session.commit(); audit('Agenda',a.id,'CRIADO',f'SAT {c.sat} encaminhada para {a.lider or "líder a definir"}')
-        if fluxo=='encaminhar_lider': flash('SAT marcada e enviada ao líder para realizar o agendamento.','ok')
-        else: flash('Agendamento salvo.','ok')
+        lider_usuario=Usuario.query.get(lider_id) if lider_id else None
+        if lider_usuario and lider_usuario.perfil not in ('Líder','Administrador'): abort(400)
+        if session.get('perfil')=='Líder': lider_usuario=Usuario.query.get(session.get('user_id'))
+        equipe_id=request.form.get('equipe_id',type=int)
+        equipe_usuario=Usuario.query.get(equipe_id) if equipe_id else None
+        if equipe_usuario and equipe_usuario.perfil not in ('Equipe','Técnico','Líder'): abort(400)
+        if fluxo=='encaminhar_lider':
+            if session.get('perfil')!='Administrador' or not lider_usuario: abort(400)
+            status='Aguardando Líder'; equipe_usuario=None; lider_confirmou=False; agendado_por=None
+        else:
+            if not equipe_usuario: abort(400)
+            status='Agendada pelo Administrador' if session.get('perfil')=='Administrador' else 'Agendada pelo Líder'
+            lider_confirmou=True; agendado_por=session.get('nome')
+        a=Agenda(chamado_id=c.id,construtora=c.construtora or 'Prestes',empreendimento=c.empreendimento,
+            lider=lider_usuario.nome if lider_usuario else session.get('nome'),lider_id=lider_usuario.id if lider_usuario else session.get('user_id'),lider_email=lider_usuario.email if lider_usuario else session.get('email'),
+            equipe=equipe_usuario.nome if equipe_usuario else None,equipe_id=equipe_usuario.id if equipe_usuario else None,equipe_email=equipe_usuario.email if equipe_usuario else None,
+            prazo_contato=request.form.get('prazo_contato'),data_agendada=request.form.get('data_agendada'),hora=request.form.get('hora'),periodo=request.form.get('periodo'),status=status,tipo_fluxo=fluxo,
+            contato_status=request.form.get('contato_status'),observacao_interna=request.form.get('observacao_interna'),observacao_construtora=request.form.get('observacao_construtora'),criado_por=session.get('nome'),agendado_por=agendado_por,
+            lider_confirmou=lider_confirmou,lider_visualizou=(session.get('perfil')=='Líder'),confirmado_em=datetime.utcnow() if lider_confirmou else None)
+        db.session.add(a); db.session.commit()
+        if fluxo=='encaminhar_lider':
+            audit('Agenda',a.id,'ENVIADO_AO_LIDER',f'SAT {c.sat or c.id} enviada para {a.lider}')
+            flash('SAT enviada ao líder. Ela já aparece como notificação pendente.','ok')
+        else:
+            audit('Agenda',a.id,'AGENDADO_DIRETAMENTE',f'SAT {c.sat or c.id} | Equipe: {a.equipe} | {a.data_agendada} {a.hora or a.periodo or ""}')
+            flash('Agendamento criado e enviado diretamente para a equipe.','ok')
         return redirect(url_for('agenda'))
     qry=Agenda.query
     if session.get('perfil')=='Construtora':
         qry=qry.filter(Agenda.construtora==session.get('construtora'))
     elif session.get('perfil')=='Líder':
-        qry=qry.filter(or_(Agenda.lider_id==session.get('user_id'),func.lower(Agenda.lider)==session.get('nome','').lower()))
+        qry=qry.filter(agenda_destino_filter('lider'))
     elif session.get('perfil') in ('Equipe','Técnico'):
-        qry=qry.filter(func.lower(Agenda.equipe)==session.get('nome','').lower())
+        qry=qry.filter(agenda_destino_filter('equipe'))
     mes=request.args.get('mes'); emp=request.args.get('empreendimento'); status=request.args.get('status')
     if mes: qry=qry.filter(Agenda.data_agendada.like(mes+'%'))
     if emp: qry=qry.filter_by(empreendimento=emp)
@@ -1292,7 +1315,7 @@ def agenda():
     next_month=cal_month+1 if cal_month<12 else 1; next_year=cal_year+1 if cal_month==12 else cal_year
     avisos=[]
     if session.get('perfil')=='Líder':
-        avisos=Agenda.query.filter(or_(Agenda.lider_id==session.get('user_id'),func.lower(Agenda.lider)==session.get('nome','').lower()),Agenda.lider_confirmou==False,Agenda.status=='Aguardando agendamento do líder').order_by(Agenda.criado_em.desc()).all()
+        avisos=Agenda.query.filter(agenda_destino_filter('lider'),Agenda.lider_confirmou==False,Agenda.status.in_(['Aguardando Líder','Aguardando agendamento do líder'])).order_by(Agenda.criado_em.desc()).all()
     return render_template('agenda.html',rows=rows,chamados_map=chamados_map,chamados=Chamado.query.order_by(Chamado.id.desc()).all(),lideres=Usuario.query.filter(Usuario.perfil.in_(['Líder','Administrador'])).all(),equipes=Usuario.query.filter(Usuario.perfil.in_(['Equipe','Técnico','Líder'])).all(),emps=Empreendimento.query.order_by(Empreendimento.nome).all(),weeks=weeks,by_day=by_day,avisos=avisos,cal_year=cal_year,cal_month=cal_month,month_name=['','Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'][cal_month],prev_mes=f'{prev_year:04d}-{prev_month:02d}',next_mes=f'{next_year:04d}-{next_month:02d}')
 
 
@@ -1329,9 +1352,9 @@ def agenda_abrir_aviso(id):
 def api_agenda_versao():
     qry=Agenda.query
     if session.get('perfil')=='Líder':
-        qry=qry.filter(or_(Agenda.lider_id==session.get('user_id'),func.lower(Agenda.lider)==session.get('nome','').lower()))
+        qry=qry.filter(agenda_destino_filter('lider'))
     elif session.get('perfil') in ('Equipe','Técnico'):
-        qry=qry.filter(func.lower(Agenda.equipe)==session.get('nome','').lower())
+        qry=qry.filter(agenda_destino_filter('equipe'))
     elif session.get('perfil')=='Construtora':
         qry=qry.filter(Agenda.construtora==session.get('construtora'))
     last=qry.order_by(Agenda.atualizado_em.desc(),Agenda.id.desc()).first()
@@ -1408,25 +1431,28 @@ def exportar_agenda():
 @allow('Administrador','Líder')
 def agenda_editar(id):
     a=Agenda.query.get_or_404(id)
-    if session.get('perfil')=='Líder' and not (a.lider_id==session.get('user_id') or (a.lider or '').lower()==session.get('nome','').lower()): abort(403)
+    if session.get('perfil')=='Líder' and not (a.lider_id==session.get('user_id') or (a.lider_email and a.lider_email.lower()==(session.get('email') or '').lower()) or (a.lider or '').lower()==session.get('nome','').lower()): abort(403)
     if request.method=='POST':
         if session.get('perfil')=='Líder':
-            a.equipe=request.form.get('equipe')
-            a.data_agendada=request.form.get('data_agendada')
-            a.hora=request.form.get('hora')
-            a.periodo=request.form.get('periodo')
-            a.contato_status=request.form.get('contato_status') or 'Cliente confirmado'
-            a.observacao_interna=request.form.get('observacao_interna')
-            a.lider_visualizou=True; a.lider_confirmou=True; a.confirmado_em=datetime.utcnow()
-            a.status='Enviada para equipe' if a.equipe else 'Agendada'
-            db.session.commit(); audit('Agenda',id,'AGENDADO_PELO_LIDER',f'{a.data_agendada} {a.hora or a.periodo or ""} | Equipe: {a.equipe or "A definir"}')
-            flash('Agenda confirmada. O administrador já recebeu a atualização.','ok')
+            equipe_id=request.form.get('equipe_id',type=int)
+            equipe_usuario=Usuario.query.get(equipe_id) if equipe_id else None
+            if not equipe_usuario or equipe_usuario.perfil not in ('Equipe','Técnico','Líder'): abort(400)
+            a.equipe=equipe_usuario.nome; a.equipe_id=equipe_usuario.id; a.equipe_email=equipe_usuario.email
+            a.data_agendada=request.form.get('data_agendada'); a.hora=request.form.get('hora'); a.periodo=request.form.get('periodo')
+            a.contato_status=request.form.get('contato_status') or 'Cliente confirmou'; a.observacao_interna=request.form.get('observacao_interna')
+            a.lider_visualizou=True; a.lider_confirmou=True; a.confirmado_em=datetime.utcnow(); a.agendado_por=session.get('nome'); a.tipo_fluxo='encaminhar_lider'; a.status='Agendada pelo Líder'
+            db.session.commit(); audit('Agenda',id,'AGENDADO_PELO_LIDER',f'{a.data_agendada} {a.hora or a.periodo or ""} | Equipe: {a.equipe}')
+            flash('Agenda confirmada e enviada automaticamente para a equipe.','ok')
         else:
-            for f in ['lider','equipe','prazo_contato','data_agendada','hora','periodo','status','contato_status','observacao_interna','observacao_construtora']: setattr(a,f,request.form.get(f))
+            for f in ['prazo_contato','data_agendada','hora','periodo','status','contato_status','observacao_interna','observacao_construtora']: setattr(a,f,request.form.get(f))
             lider_id=request.form.get('lider_id',type=int)
             if lider_id:
                 u=Usuario.query.get(lider_id)
-                if u: a.lider_id=u.id; a.lider=u.nome
+                if u: a.lider_id=u.id; a.lider=u.nome; a.lider_email=u.email
+            equipe_id=request.form.get('equipe_id',type=int)
+            if equipe_id:
+                u=Usuario.query.get(equipe_id)
+                if u: a.equipe_id=u.id; a.equipe=u.nome; a.equipe_email=u.email
             db.session.commit(); audit('Agenda',id,'EDITADO',a.status); flash('Agenda atualizada.','ok')
         return redirect(url_for('agenda'))
     return render_template('agenda_editar.html',a=a,lideres=Usuario.query.filter(Usuario.perfil.in_(['Líder','Administrador'])).all(),equipes=Usuario.query.filter(Usuario.perfil.in_(['Equipe','Técnico','Líder'])).all())

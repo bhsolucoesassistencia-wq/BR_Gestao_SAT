@@ -1,0 +1,42 @@
+GERENCIAMENTO BR SOLUÇÕES — VERSÃO 15.2
+
+ATUALIZAÇÃO PRINCIPAL
+Fluxo completo de Agenda entre Administrador, Líder e Equipe.
+
+1. ADMINISTRADOR — AGENDAR DIRETAMENTE
+- Seleciona SAT, data, horário, líder opcional e equipe/técnico.
+- O agendamento recebe o status "Agendada pelo Administrador".
+- A agenda aparece imediatamente para o usuário da equipe selecionado.
+
+2. ADMINISTRADOR — ENVIAR PARA O LÍDER AGENDAR
+- Seleciona SAT, líder, prazo, data/horário sugeridos e orientação.
+- O registro recebe o status "Aguardando Líder".
+- O líder recebe contador e aviso pendente no painel/agenda.
+
+3. LÍDER
+- Abre a notificação pendente.
+- Confirma data e horário com o cliente.
+- Seleciona a equipe/técnico pelo usuário cadastrado.
+- O registro recebe o status "Agendada pelo Líder".
+- A agenda aparece automaticamente para a equipe selecionada.
+
+CORREÇÕES DE IDENTIFICAÇÃO
+- O vínculo com líder e equipe agora é salvo por ID, nome e e-mail.
+- Isso evita falhas quando houver nomes escritos de formas diferentes.
+- A sessão também passa a armazenar o e-mail do usuário.
+
+BANCO DE DADOS
+A migração automática adiciona as colunas:
+- lider_email
+- equipe_id
+- equipe_email
+- tipo_fluxo
+- agendado_por
+
+PUBLICAÇÃO
+Substitua os arquivos no GitHub e faça novo deploy no Render.
+O banco PostgreSQL existente será preservado e atualizado automaticamente.
+
+VALIDAÇÕES REALIZADAS
+- Compilação Python do app.py.
+- Validação de sintaxe de todos os templates Jinja/HTML.
