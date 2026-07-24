@@ -1,0 +1,33 @@
+BR SMARTSAT 13.1 — BANCO PERMANENTE NO RENDER
+
+O CÓDIGO JÁ ESTÁ PREPARADO PARA POSTGRESQL.
+O banco real precisa ser criado/conectado dentro da sua conta do Render.
+
+PASSOS NO RENDER
+1. Abra o Dashboard do Render.
+2. Clique em New + e depois PostgreSQL.
+3. Nome sugerido: br-gestao-db
+4. Database: brgestao
+5. User: brgestao
+6. Crie o banco.
+7. Abra o serviço web br-gestao-sat.
+8. Vá em Environment.
+9. Crie a variável DATABASE_URL usando a Internal Database URL do PostgreSQL.
+10. Faça um novo deploy.
+
+MIGRAÇÃO AUTOMÁTICA
+- No primeiro início com PostgreSQL vazio, o sistema copia automaticamente os dados
+  existentes de data/gestao10.db para o PostgreSQL.
+- A migração só ocorre se o PostgreSQL estiver vazio.
+- Depois disso, os próximos cadastros ficam no PostgreSQL permanente.
+
+VALIDAÇÃO
+No Shell do Render, execute:
+python verificar_banco.py
+
+O resultado deve mostrar uma URL postgresql:// e as quantidades de usuários, SATs,
+financeiro e agenda.
+
+ATENÇÃO SOBRE FOTOS
+O PostgreSQL preserva os registros. Arquivos de fotos/assinaturas ainda exigem
+Render Disk ou armazenamento externo para não sumirem em novos deploys.

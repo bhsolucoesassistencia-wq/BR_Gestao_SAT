@@ -1,0 +1,21 @@
+GERENCIAMENTO BR SOLUÇÕES — VERSÃO 14.0
+
+NOVIDADE PRINCIPAL: FOTOS E GOOGLE DRIVE DENTRO DA SAT
+
+- A tela de cada SAT agora mostra um painel de Fotos e Arquivos.
+- As fotos ficam separadas em Antes, Durante, Depois, Vistoria e Material.
+- Ao abrir a SAT, o sistema procura automaticamente a pasta no Google Drive e vincula novas fotos.
+- Botões para abrir a pasta completa da SAT, abrir a foto no Drive e ampliar a imagem.
+- Resumo com quantidade total e quantidade por etapa.
+- O envio de novas fotos pelo celular continua disponível.
+- Ao excluir uma SAT, é possível escolher se as fotos do Google Drive serão mantidas ou apagadas.
+- Por segurança, a opção padrão mantém as fotos no Google Drive.
+
+PARA INICIAR NO WINDOWS
+1. Extraia este ZIP em uma pasta nova.
+2. Execute INICIAR_WINDOWS.bat.
+3. Abra http://127.0.0.1:5000
+4. Confirme que o cabeçalho mostra Versão 14.0.
+
+OBSERVAÇÃO
+A sincronização com o Google Drive exige as credenciais e o ID da pasta principal configurados conforme o arquivo LEIA-ME_GOOGLE_DRIVE_13.4.txt.

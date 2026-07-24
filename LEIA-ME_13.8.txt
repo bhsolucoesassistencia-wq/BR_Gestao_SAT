@@ -1,0 +1,17 @@
+GERENCIAMENTO BR SOLUÇÕES — VERSÃO 13.8
+
+FLUXO DA AGENDA CORRIGIDO
+1. Administrador abre Agenda e usa “Marcar SAT para o líder agendar”.
+2. Escolhe SAT, líder, prazo e sugestão de data/hora.
+3. O líder recebe um aviso vermelho no menu Agenda.
+4. O líder abre a sugestão, fala com o cliente, confirma/ajusta data e hora e escolhe a equipe.
+5. Ao salvar, o administrador recebe a atualização automaticamente em até 5 segundos.
+6. A equipe visualiza somente os atendimentos destinados a ela.
+7. A exportação da agenda pode ser filtrada por empreendimento.
+
+CONTAS LOCAIS DE TESTE
+Administrador: admin@brsolucoes.com.br / 123456
+Líder: lider@brsolucoes.com.br / 123456
+Equipe: equipe@brsolucoes.com.br / 123456
+
+A versão 13.8 aparece no cabeçalho e na tela da Agenda para confirmar que o arquivo correto foi aberto.

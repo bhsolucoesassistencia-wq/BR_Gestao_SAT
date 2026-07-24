@@ -1,0 +1,16 @@
+GERENCIAMENTO BR SOLUÇÕES 13.2
+
+Principais melhorias:
+- Novo nome e identidade visual em azul-marinho, cobre e tons claros.
+- Remoção do menu "Novo chamado"; chamados entram pela importação Excel.
+- Dashboard principal com gráficos de status e empreendimento.
+- Dashboard financeiro com gráficos mensais e por origem.
+- Exportação financeira para Excel com gráficos dentro da planilha.
+- Agenda com calendário mensal, navegação entre meses e compromissos por dia.
+
+Para testar no Windows:
+1. Abra a pasta.
+2. Execute INICIAR_WINDOWS.bat ou, no PowerShell, rode: python app.py
+3. Abra http://127.0.0.1:5000
+- Pesquisa rápida por SAT, empreendimento, torre/apartamento, cliente ou descrição ao criar agenda.
+- Exportação da agenda para Excel com resumo e uma planilha organizada por empreendimento.

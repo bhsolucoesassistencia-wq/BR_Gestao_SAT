@@ -1,0 +1,20 @@
+BR SmartSAT Enterprise 13.1
+
+PRINCIPAIS NOVIDADES
+- Agenda com acesso Administrador/Líder para edição.
+- Equipe/Técnico visualizam apenas agenda vinculada ao próprio nome.
+- Construtora visualiza somente sua agenda e somente observações liberadas.
+- Financeiro com dashboard, entradas, saídas, entradas diversas e exportação Excel.
+- Cadastro de construtoras e vínculo com usuários/empreendimentos.
+- PostgreSQL configurado pelo DATABASE_URL no Render para dados permanentes.
+
+IMPORTANTE NO RENDER
+1. Confirme que o serviço web possui a variável DATABASE_URL ligada ao banco PostgreSQL.
+2. Não remova o banco br-gestao-db do render.yaml.
+3. Faça backup do SQLite antigo antes da primeira implantação.
+4. Em produção, fotos ainda precisam de armazenamento persistente externo ou Render Disk; o PostgreSQL protege os registros, mas arquivos enviados ao disco local podem sumir em um novo deploy.
+
+LOGIN INICIAL
+admin@brsolucoes.com.br
+Senha: 123456
+Troque a senha após entrar.

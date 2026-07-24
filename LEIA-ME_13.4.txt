@@ -1,0 +1,11 @@
+GERENCIAMENTO BR SOLUÇÕES 13.4
+
+Novidade principal: integração opcional com Google Drive para fotos das SATs.
+
+- Cria automaticamente pastas por empreendimento, SAT e etapa.
+- Mostra botão Abrir foto no Drive e Abrir pasta da SAT.
+- Guarda no banco o ID e os links do Google Drive.
+- Mantém funcionamento local caso o Drive não esteja configurado.
+- Mantém cópia local como contingência.
+
+Leia LEIA-ME_GOOGLE_DRIVE_13.4.txt para configurar.

@@ -1,0 +1,17 @@
+GERENCIAMENTO BR SOLUÇÕES 15.0 — GOOGLE DRIVE REAL NO COMPUTADOR
+
+1. Execute INICIAR_WINDOWS.bat.
+2. Entre como Administrador.
+3. Abra o menu Google Drive.
+4. Cole o caminho da pasta principal onde estão as pastas das SATs.
+   Exemplo: G:\Meu Drive\Fotos BR Soluções
+5. Salve.
+6. Abra uma SAT e clique em Sincronizar agora.
+
+O sistema localiza pastas em qualquer nível com nomes como:
+- 29014
+- SAT 29014
+- 29014 - VISTORIA
+
+As imagens encontradas ficam vinculadas à SAT e são exibidas diretamente no sistema.
+A integração por API continua disponível para uso no Render.

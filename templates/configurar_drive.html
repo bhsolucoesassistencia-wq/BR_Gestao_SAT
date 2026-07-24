@@ -1,0 +1,23 @@
+{% extends "base.html" %}{% block content %}
+<div class="section-head"><div><h2>Configurar Google Drive</h2><p class="muted">Conecte a pasta sincronizada pelo Google Drive para computador. Não é necessário criar credenciais da API para o teste local.</p></div></div>
+<div class="grid g2">
+  <div class="card">
+    <h3>Pasta principal das fotos</h3>
+    <form method="post">
+      <label>Caminho completo da pasta do Google Drive</label>
+      <input name="local_root" value="{{ atual }}" placeholder="Ex.: G:\Meu Drive\Fotos BR Soluções" required>
+      <p class="muted">No Explorador de Arquivos, abra a pasta onde ficam as SATs, clique na barra de endereço, copie o caminho e cole acima.</p>
+      <button class="btn">Salvar e conectar</button>
+    </form>
+  </div>
+  <div class="card">
+    <h3>Situação da integração</h3>
+    <p><b>Modo:</b> {{ modo }}</p>
+    {% if atual %}<p><b>Pasta:</b> {{ atual }}</p>{% endif %}
+    {% if teste %}<p class="ok">{{ teste }}</p>{% endif %}
+    <p class="muted">O sistema pesquisa em qualquer subpasta por nomes como “29014”, “SAT 29014” ou “29014 - VISTORIA”. As fotos encontradas aparecem automaticamente dentro da SAT.</p>
+    {% if atual %}<form method="post" action="{{ url_for('desativar_drive_local') }}"><button class="btn danger">Desativar integração local</button></form>{% endif %}
+  </div>
+</div>
+<div class="card"><h3>Como testar</h3><p>1. Salve a pasta principal acima.<br>2. Abra uma SAT que já tenha uma pasta no Drive.<br>3. Clique em <b>Sincronizar agora</b> ou simplesmente abra novamente o chamado.<br>4. As miniaturas devem aparecer em “Fotos e arquivos da SAT”.</p></div>
+{% endblock %}

@@ -1,0 +1,31 @@
+GERENCIAMENTO BR SOLUÇÕES 13.4 — GOOGLE DRIVE
+
+O sistema continua funcionando localmente sem Google Drive. Quando a integração é configurada, cada foto enviada na SAT também é copiada automaticamente para:
+
+PASTA RAIZ / EMPREENDIMENTO / SAT Nº / ETAPA DA FOTO
+
+Exemplo:
+Fotos BR Soluções / Vittace Reserva / SAT 29014 / Antes do serviço
+
+CONFIGURAÇÃO
+1. No Google Cloud, crie um projeto e ative a Google Drive API.
+2. Crie uma Conta de Serviço e baixe a chave JSON.
+3. No Google Drive, crie ou escolha a pasta raiz de fotos.
+4. Compartilhe essa pasta com o e-mail client_email da Conta de Serviço, com permissão de Editor.
+5. Copie o ID da pasta raiz (trecho da URL após /folders/).
+
+TESTE NO WINDOWS (PowerShell, antes de iniciar o app):
+$env:GOOGLE_SERVICE_ACCOUNT_JSON="C:\caminho\credenciais-drive.json"
+$env:GOOGLE_DRIVE_ROOT_FOLDER_ID="ID_DA_PASTA_RAIZ"
+python app.py
+
+NO RENDER
+Crie as variáveis protegidas:
+GOOGLE_SERVICE_ACCOUNT_JSON = conteúdo completo do arquivo JSON
+GOOGLE_DRIVE_ROOT_FOLDER_ID = ID da pasta raiz
+
+SEGURANÇA
+- Nunca coloque a chave JSON dentro do GitHub.
+- A foto continua salva localmente como contingência.
+- Se o Drive falhar, o sistema informa o erro e mantém a foto na SAT.
+- Ao excluir uma foto pelo sistema, o arquivo do Drive também é removido quando a integração estiver ativa.

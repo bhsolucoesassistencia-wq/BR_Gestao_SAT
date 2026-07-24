@@ -1,0 +1,18 @@
+GERENCIAMENTO BR SOLUÇÕES 13.5
+
+NOVIDADES
+- Dashboard com porcentagens visíveis no gráfico de status.
+- Integração das fotos novas com Google Drive.
+- Sincronização das fotos que já existem no Drive para dentro da SAT.
+- Botão “Sincronizar fotos do Drive” na tela da SAT.
+- Visualização das fotos privadas do Drive dentro do sistema, sem tornar os arquivos públicos.
+
+PADRÃO DE PASTAS NECESSÁRIO
+Pasta raiz configurada / Empreendimento / SAT 12345 / Antes do serviço, Durante do serviço, Depois do serviço etc.
+
+CONFIGURAÇÃO
+Defina GOOGLE_SERVICE_ACCOUNT_JSON e GOOGLE_DRIVE_ROOT_FOLDER_ID conforme LEIA-ME_GOOGLE_DRIVE_13.4.txt.
+Compartilhe a pasta raiz com o e-mail da conta de serviço.
+
+IMPORTANTE
+A sincronização não duplica fotos: o sistema compara o ID do arquivo no Google Drive.

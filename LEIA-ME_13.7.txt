@@ -1,0 +1,18 @@
+GERENCIAMENTO BR SOLUÇÕES 13.7
+
+CORREÇÃO DO FLUXO ADMINISTRADOR → LÍDER → EQUIPE
+
+1. O administrador seleciona a SAT, o líder e envia uma sugestão de data/hora.
+2. O líder recebe um aviso com contador vermelho no menu Agenda.
+3. Ao abrir, o líder vê a sugestão do administrador em destaque.
+4. O líder confirma ou altera data/hora, escolhe equipe/técnico e envia.
+5. A agenda do administrador é atualizada automaticamente a cada 15 segundos.
+6. A identificação do líder agora usa ID do usuário, evitando falhas por diferença no nome.
+
+TESTE RECOMENDADO
+- Abra o Administrador no navegador normal.
+- Abra o Líder em janela anônima.
+- Envie uma SAT pelo Administrador.
+- No Líder, abra Agenda e confira o aviso.
+- Confirme data/hora e equipe.
+- Volte ao Administrador; a atualização aparece em até 15 segundos.

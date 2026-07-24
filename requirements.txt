@@ -2,7 +2,9 @@ Flask==3.1.1
 Flask-SQLAlchemy==3.1.1
 SQLAlchemy==2.0.41
 gunicorn==23.0.0
-psycopg2-binary==2.9.10; python_version < "3.14"
+psycopg2-binary==2.9.12
 reportlab==4.4.2
 
 openpyxl==3.1.5
+google-api-python-client>=2.176.0
+google-auth>=2.40.0

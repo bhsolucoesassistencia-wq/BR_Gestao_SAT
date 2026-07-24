@@ -1,0 +1,18 @@
+GERENCIAMENTO BR SOLUÇÕES 15.1 — CORREÇÃO POSTGRESQL NO RENDER
+
+Correção aplicada:
+- Driver PostgreSQL atualizado para psycopg2-binary 2.9.12.
+- Compatível com Python 3.14 usado pelo Render.
+- Mantida a leitura automática da variável DATABASE_URL.
+- Mantida a migração automática do banco SQLite legado para PostgreSQL quando aplicável.
+
+PUBLICAÇÃO NO GITHUB/RENDER
+1. Envie todos os arquivos desta pasta para o repositório BR_Gestao_SAT, substituindo os existentes.
+2. Confirme que requirements.txt contém: psycopg2-binary==2.9.12
+3. No Render, mantenha DATABASE_URL com a Internal Database URL.
+4. Faça Manual Deploy > Deploy latest commit.
+5. Nos logs, confirme que não aparece mais: No module named psycopg2.
+
+SEGURANÇA
+- Não publique nem envie a DATABASE_URL para outras pessoas. Ela contém a senha do banco.
+- Não apague o backup local do banco SQLite até conferir todos os dados online.

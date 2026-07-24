@@ -1,0 +1,15 @@
+GERENCIAMENTO BR SOLUÇÕES 13.3
+
+NOVIDADES
+- Aviso automático ao líder quando o administrador encaminha uma SAT.
+- Data e hora sugeridas aparecem no aviso.
+- Líder pode abrir, ajustar e confirmar o agendamento.
+- Contador vermelho de avisos no menu Agenda.
+- Exportação da agenda com uma aba por empreendimento e cores diferentes.
+- Exportação de chamados com cabeçalho destacado no estilo da agenda.
+- Gráfico circular do dashboard mostra porcentagens nas fatias e no tooltip.
+
+TESTE LOCAL
+1. Execute .\INICIAR_WINDOWS.bat no PowerShell.
+2. Acesse http://127.0.0.1:5000
+3. Crie um usuário Líder e entre com ele para testar os avisos.

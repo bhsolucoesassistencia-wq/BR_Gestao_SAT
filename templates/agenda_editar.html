@@ -1,0 +1,31 @@
+{% extends 'base.html' %}{% block title %}Agendar SAT | Gerenciamento BR Soluções{% endblock %}
+{% block content %}
+{% if perfil=='Líder' %}
+<div class="card leader-alert">
+  <h2>🔔 Nova SAT para você agendar</h2>
+  <div class="subtle">Confira a sugestão enviada pelo administrador, fale com o cliente e confirme a agenda.</div>
+  <div class="grid g4" style="margin-top:16px">
+    <div class="metric"><span>Data sugerida</span><b style="font-size:20px">{{ a.data_agendada or 'A definir' }}</b></div>
+    <div class="metric"><span>Hora sugerida</span><b style="font-size:20px">{{ a.hora or a.periodo or 'A definir' }}</b></div>
+    <div class="metric"><span>Prazo para contato</span><b style="font-size:20px">{{ a.prazo_contato or 'A definir' }}</b></div>
+    <div class="metric"><span>Status</span><b style="font-size:17px">{{ a.status }}</b></div>
+  </div>
+  {% if a.observacao_interna %}<div class="suggestion"><b>Orientação do administrador:</b> {{ a.observacao_interna }}</div>{% endif %}
+</div>
+<div class="card"><h2>Confirmar agendamento com o cliente</h2>
+<form method="post" class="form">
+  <div><label>Data confirmada</label><input type="date" name="data_agendada" value="{{ a.data_agendada or '' }}" required></div>
+  <div><label>Hora confirmada</label><input type="time" name="hora" value="{{ a.hora or '' }}"></div>
+  <div><label>Período</label><select name="periodo"><option value="">Selecione</option>{% for x in ['Manhã','Tarde','Horário definido'] %}<option {% if a.periodo==x %}selected{% endif %}>{{ x }}</option>{% endfor %}</select></div>
+  <div><label>Equipe/Técnico que atenderá</label><select name="equipe"><option value="">A definir</option>{% for u in equipes %}<option {% if a.equipe==u.nome %}selected{% endif %}>{{ u.nome }}</option>{% endfor %}</select></div>
+  <div><label>Retorno do cliente</label><select name="contato_status"><option>Cliente confirmou</option><option>Cliente não respondeu</option><option>Cliente pediu reagendamento</option></select></div>
+  <div class="full"><label>Observação do líder</label><textarea name="observacao_interna">{{ a.observacao_interna or '' }}</textarea></div>
+  <div class="full"><button class="btn">Confirmar e enviar agenda</button> <a class="btn btn2" href="{{ url_for('agenda') }}">Voltar</a></div>
+</form></div>
+{% else %}
+<div class="card"><h2>Editar agendamento</h2><form method="post" class="form">
+<div><label>Líder</label><select name="lider_id"><option value="">Selecione</option>{% for u in lideres %}{% if u.perfil=='Líder' %}<option value="{{ u.id }}" {% if a.lider_id==u.id or a.lider==u.nome %}selected{% endif %}>{{ u.nome }}</option>{% endif %}{% endfor %}</select></div>
+<div><label>Equipe</label><select name="equipe"><option value="">A definir</option>{% for u in equipes %}<option {% if a.equipe==u.nome %}selected{% endif %}>{{ u.nome }}</option>{% endfor %}</select></div>
+<div><label>Prazo contato</label><input type="date" name="prazo_contato" value="{{ a.prazo_contato or '' }}"></div><div><label>Data</label><input type="date" name="data_agendada" value="{{ a.data_agendada or '' }}"></div><div><label>Hora</label><input type="time" name="hora" value="{{ a.hora or '' }}"></div><div><label>Período</label><select name="periodo">{% for x in ['Manhã','Tarde','Horário definido'] %}<option {% if a.periodo==x %}selected{% endif %}>{{ x }}</option>{% endfor %}</select></div><div><label>Status</label><select name="status">{% for s in agenda_status %}<option {% if a.status==s %}selected{% endif %}>{{ s }}</option>{% endfor %}</select></div><div><label>Contato</label><input name="contato_status" value="{{ a.contato_status or '' }}"></div><div class="full"><label>Observação interna</label><textarea name="observacao_interna">{{ a.observacao_interna or '' }}</textarea></div><div class="full"><label>Observação para construtora</label><textarea name="observacao_construtora">{{ a.observacao_construtora or '' }}</textarea></div><div class="full"><button class="btn">Salvar</button> <a class="btn btn2" href="{{ url_for('agenda') }}">Voltar</a></div></form></div>
+{% endif %}
+{% endblock %}
